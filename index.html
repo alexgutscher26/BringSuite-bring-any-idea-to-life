@@ -4,7 +4,28 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BringSuite - Bring Anything to Life</title>
+    <title>BringSuite — Bring Any Idea to Life</title>
+    <meta name="description" content="BringSuite helps you turn ideas into live projects with AI-powered generation, previews, and exports to popular frameworks." />
+    <meta name="keywords" content="AI, code generation, React, Vue, export, Gemini, Stripe, preview" />
+    <meta name="author" content="ammaar" />
+    <meta name="theme-color" content="#0B0B0E" />
+    <meta name="color-scheme" content="dark light" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BringSuite — Bring Any Idea to Life" />
+    <meta property="og:description" content="Turn any idea into a live project with AI. Generate, refine, preview, and export to React/Vue." />
+    <meta property="og:image" content="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+    <meta property="og:image:alt" content="BringSuite preview banner" />
+    <meta property="og:site_name" content="BringSuite" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BringSuite — Bring Any Idea to Life" />
+    <meta name="twitter:description" content="Turn any idea into a live project with AI. Generate, refine, preview, and export." />
+    <meta name="twitter:image" content="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+    <link rel="alternate" href="/" hreflang="en" />
+    <link rel="canonical" href="/" />
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- PDF.js for rendering PDF previews -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -21,6 +42,42 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js"></script>
+
+    <script>
+      (function() {
+        try {
+          var href = window.location.origin + window.location.pathname;
+          var canonical = document.querySelector('link[rel=canonical]');
+          if (!canonical) {
+            canonical = document.createElement('link');
+            canonical.setAttribute('rel', 'canonical');
+            document.head.appendChild(canonical);
+          }
+          canonical.setAttribute('href', href);
+
+          var ogUrl = document.querySelector('meta[property="og:url"]');
+          if (!ogUrl) {
+            ogUrl = document.createElement('meta');
+            ogUrl.setAttribute('property', 'og:url');
+            document.head.appendChild(ogUrl);
+          }
+          ogUrl.setAttribute('content', href);
+
+          var ld = {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "BringSuite",
+            "url": href,
+            "description": "BringSuite turns ideas into live projects with AI and code exports.",
+            "inLanguage": "en-US"
+          };
+          var script = document.createElement('script');
+          script.type = 'application/ld+json';
+          script.text = JSON.stringify(ld);
+          document.head.appendChild(script);
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- JSZip for Exporting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
