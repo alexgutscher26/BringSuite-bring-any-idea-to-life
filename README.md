@@ -64,6 +64,7 @@ Create a `.env.local` in the project root with:
 - `npm run auth:generate` — generate Better Auth SQL
 - `npm run auth:migrate` — migrate Better Auth SQL
 - `npm run auth:apply` — apply generated SQL via script
+ - `npm run test` — run unit tests
 
 ## Run Locally
 
@@ -80,6 +81,27 @@ Create a `.env.local` in the project root with:
 - Generate a project; preview and refine it
 - Save creations, organize with folders, and export to React/Vue
 - Upgrade via Stripe; after success, the client marks plan as PRO
+
+## Keyboard Shortcuts
+
+- Centralized registry with chord support and contexts
+- Global shortcuts:
+  - `Ctrl+S` or `Ctrl+K Ctrl+S` save
+  - `Ctrl+,` or `Ctrl+K Ctrl+,` open shortcut manager
+  - `Ctrl+K` toggle command palette
+- Editor shortcuts (when code view active):
+  - `Ctrl+Z` undo
+  - `Ctrl+Y` or `Ctrl+Shift+Z` redo
+- Manager features:
+  - Edit, disable, and reassign shortcuts
+  - Adjust chord activation delay
+  - Conflict detection
+  - Import/Export JSON configuration
+
+Accessibility:
+- Adjustable activation delays in manager
+- Disable or reassign any shortcut
+- Conflicts surfaced with warnings
 
 ## API Endpoints
 

@@ -52,7 +52,7 @@
 - [ ] Rate limiting quotas aligned to plan tiers
 - [ ] Billing proration and refund handling
 - [ ] Audit logs for admin review
-- [ ] Keyboard shortcuts for power users
+- [x] Keyboard shortcuts for power users
 - [ ] Idle/timeout handling for long‑running tasks
 
 ## Short-Term Priorities

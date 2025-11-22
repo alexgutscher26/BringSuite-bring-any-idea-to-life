@@ -6,6 +6,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { ArrowDownTrayIcon, PlusIcon, ViewColumnsIcon, CodeBracketIcon, XMarkIcon, CommandLineIcon, MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, ArchiveBoxArrowDownIcon, PaperAirplaneIcon, LockClosedIcon, DocumentIcon, DocumentTextIcon, PhotoIcon, FolderIcon, CloudArrowUpIcon, CheckCircleIcon, ArrowUturnLeftIcon, ArrowUturnRightIcon } from '@heroicons/react/24/outline';
 import { SparklesIcon, BoltIcon } from '@heroicons/react/24/solid';
 import { Creation } from './CreationHistory';
+import { useShortcuts } from './ShortcutProvider'
 import { convertToFramework } from '../services/gemini';
 
 interface LivePreviewProps {
@@ -148,37 +149,7 @@ const CodeEditor = ({
         }
     }, [code, prismLang]);
 
-    // Keyboard Shortcuts for Undo/Redo
-    useEffect(() => {
-        /**
-         * Handles keyboard events for undo and redo actions.
-         *
-         * The function checks if the input is in read-only mode. If not, it listens for specific key combinations:
-         * Ctrl+Z or Cmd+Z for undo, and Ctrl+Y for redo. It prevents the default action and calls the appropriate
-         * callback functions onUndo or onRedo based on the key pressed and the state of the shift key.
-         *
-         * @param e - The keyboard event triggered by the user.
-         */
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (readOnly) return;
-            // Undo: Ctrl+Z or Cmd+Z
-            if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
-                e.preventDefault();
-                if (e.shiftKey) {
-                     onRedo?.();
-                } else {
-                     onUndo?.();
-                }
-            }
-            // Redo: Ctrl+Y (Windows standard)
-            if ((e.metaKey || e.ctrlKey) && e.key === 'y') {
-                e.preventDefault();
-                onRedo?.();
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [onUndo, onRedo, readOnly]);
+    
 
     /**
      * Synchronizes the scroll position of a textarea and a preformatted text element.
@@ -447,6 +418,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({ creation, isLoading, i
     const [showExportMenu, setShowExportMenu] = useState(false);
     const [isConverting, setIsConverting] = useState(false);
     const [iframeSrc, setIframeSrc] = useState('');
+    const { register, setContext } = useShortcuts()
     
     // Refs for intelligent syncing
     const prevCreationIdRef = useRef<string | null>(null);
@@ -559,20 +531,16 @@ export const LivePreview: React.FC<LivePreviewProps> = ({ creation, isLoading, i
         }
     }, [creation?.id, creation?.originalImage, isLoading]);
 
-    // Command Palette Shortcut
     useEffect(() => {
-        /**
-         * Toggles the visibility of the palette when 'k' is pressed with meta or control key.
-         */
-        const onKeyDown = (e: KeyboardEvent) => {
-          if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-            e.preventDefault();
-            setShowPalette(p => !p);
-          }
-        };
-        window.addEventListener('keydown', onKeyDown);
-        return () => window.removeEventListener('keydown', onKeyDown);
-      }, []);
+        if (viewMode === 'split-code' && !isLoading) setContext('editor')
+        else setContext('preview')
+    }, [viewMode, isLoading])
+
+    useEffect(() => {
+        register({ id: 'toggle-palette', label: 'Command Palette', sequences: [[{ ctrl: true, key: 'k' }], [{ ctrl: true, key: 'k' }, { ctrl: true, key: 'k' }]], contexts: ['global', 'preview'], run: () => setShowPalette(p => !p) })
+    }, [])
+
+    
 
     // Handle Resize
     const startResizing = useCallback((e: React.MouseEvent) => { e.preventDefault(); setIsDragging(true); }, []);
@@ -599,6 +567,18 @@ export const LivePreview: React.FC<LivePreviewProps> = ({ creation, isLoading, i
             document.body.style.cursor = '';
         };
     }, [isDragging, resize, stopResizing]);
+
+    useEffect(() => {
+        const handler = () => {
+            if (!creation || !onAutoSave || Object.keys(files).length === 0) return
+            setSaveStatus('saving')
+            onAutoSave(files)
+            setLastSavedTime(new Date())
+            setTimeout(() => setSaveStatus('saved'), 500)
+        }
+        window.addEventListener('shortcut-save', handler as EventListener)
+        return () => window.removeEventListener('shortcut-save', handler as EventListener)
+    }, [creation, onAutoSave, files])
 
     // Handlers
     /**
@@ -654,6 +634,12 @@ export const LivePreview: React.FC<LivePreviewProps> = ({ creation, isLoading, i
         setFuture(newFuture);
         setSaveStatus('unsaved');
     };
+
+    useEffect(() => {
+        if (!isPro) return
+        register({ id: 'editor-undo', label: 'Undo', sequences: [[{ ctrl: true, key: 'z' }]], contexts: ['editor'], run: () => handleUndo() })
+        register({ id: 'editor-redo', label: 'Redo', sequences: [[{ ctrl: true, key: 'y' }], [{ ctrl: true, key: 'z', shift: true }]], contexts: ['editor'], run: () => handleRedo() })
+    }, [isPro, past, future])
 
     /**
      * Handles the submission of the refine form.

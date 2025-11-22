@@ -16,6 +16,8 @@ import { SparklesIcon } from '@heroicons/react/24/solid';
 import { useSession, signOut } from './services/authClient'
 import { SignInModal } from './components/SignInModal'
 import { SignUpModal } from './components/SignUpModal'
+import { useShortcuts } from './components/ShortcutProvider'
+import { ShortcutManager } from './components/ShortcutManager'
 
 // Error Boundary for LivePreview
 interface ErrorBoundaryProps {
@@ -91,6 +93,8 @@ const App: React.FC = () => {
   const { data: session } = useSession()
   const [showSignIn, setShowSignIn] = useState(false)
   const [showSignUp, setShowSignUp] = useState(false)
+  const [showShortcutManager, setShowShortcutManager] = useState(false)
+  const { register, setContext, setState, showFeedback } = useShortcuts()
 
   useEffect(() => {
     /**
@@ -339,6 +343,16 @@ const App: React.FC = () => {
     reader.readAsText(file);
   };
 
+  useEffect(() => {
+    setContext(activeCreation ? 'preview' : 'home')
+    setState({ hasActiveCreation: !!activeCreation, isPro, isGenerating, isRefining })
+  }, [activeCreation, isPro, isGenerating, isRefining])
+
+  useEffect(() => {
+    register({ id: 'open-shortcut-manager', label: 'Shortcut Manager', sequences: [[{ ctrl: true, key: ',' }], [{ ctrl: true, key: 'k' }, { ctrl: true, key: ',' }], [{ ctrl: true, key: 'm' }], [{ ctrl: true, key: 'k' }, { ctrl: true, key: 'm' }]], contexts: ['global'], run: () => setShowShortcutManager(true) })
+    register({ id: 'save', label: 'Save', sequences: [[{ ctrl: true, key: 's' }], [{ ctrl: true, key: 'k' }, { ctrl: true, key: 's' }]], contexts: ['global'], when: s => !!s.hasActiveCreation, run: () => { window.dispatchEvent(new CustomEvent('shortcut-save')); showFeedback('Save', 'Ctrl+S') } })
+  }, [])
+
   const isFocused = !!activeCreation || isGenerating;
 
   return (
@@ -360,6 +374,7 @@ const App: React.FC = () => {
                   </div>
                 )}
                 <button onClick={() => setShowPricing(true)} className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Pricing</button>
+                <button onClick={() => setShowShortcutManager(true)} className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Shortcuts</button>
                 {!isPro && (
                     <button onClick={() => setShowPricing(true)} className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 text-amber-200 hover:text-white border border-amber-500/20 hover:border-amber-500/40 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-[0_0_10px_rgba(245,158,11,0.1)] hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                         <SparklesIcon className="w-3 h-3 text-amber-400" />
@@ -409,8 +424,10 @@ const App: React.FC = () => {
       <SignInModal isOpen={showSignIn} onClose={() => setShowSignIn(false)} />
       <SignUpModal isOpen={showSignUp} onClose={() => setShowSignUp(false)} />
       <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} onUpgrade={handleUpgrade} />
+      <ShortcutManager isOpen={showShortcutManager} onClose={() => setShowShortcutManager(false)} />
     </div>
   );
 };
 
 export default App;
+  
