@@ -7,7 +7,8 @@ import { prisma } from './db.js'
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY || ''
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
-const stripe = new Stripe(stripeSecret, { apiVersion: '2024-11-20.acuko' })
+const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:3001'
+const stripe = new Stripe(stripeSecret)
 
 function json(res, status, body) {
   res.statusCode = status
@@ -44,12 +45,13 @@ async function handleCreateCheckoutSession(req, res, rawBody) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/?checkout=success`,
-      cancel_url: `${origin}/?checkout=cancel`,
+      success_url: `${clientOrigin}/?checkout=success`,
+      cancel_url: `${clientOrigin}/?checkout=cancel`,
     })
 
     return json(res, 200, { id: session.id, url: session.url })
   } catch (e) {
+    console.error('Failed to create checkout session:', e)
     return json(res, 500, { error: 'Failed to create checkout session' })
   }
 }
@@ -71,6 +73,7 @@ async function handleWebhook(req, res, rawBody) {
     }
     return json(res, 200, { received: true })
   } catch (e) {
+    console.error('Webhook signature validation failed:', e)
     return json(res, 400, { error: 'Invalid webhook signature' })
   }
 }
