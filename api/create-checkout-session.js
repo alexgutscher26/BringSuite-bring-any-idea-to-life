@@ -7,6 +7,18 @@ const stripeSecret = process.env.STRIPE_SECRET_KEY || ''
 const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:3000'
 const stripe = new Stripe(stripeSecret)
 
+/**
+ * Handles the checkout session creation for Stripe.
+ *
+ * This function processes POST requests to create a checkout session based on the provided plan.
+ * It validates the request method and checks for the presence of the STRIPE_SECRET_KEY.
+ * Depending on the plan type, it configures the session with appropriate product details and returns the session ID and URL.
+ *
+ * @param req - The request object containing the HTTP request data.
+ * @param res - The response object used to send the HTTP response.
+ * @returns A JSON response containing the session ID and URL for the checkout session.
+ * @throws Error If the request method is not POST or if the checkout session creation fails.
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Method Not Allowed' })
   if (!stripeSecret) return json(res, 500, { error: 'Missing STRIPE_SECRET_KEY' })
