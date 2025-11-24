@@ -10,6 +10,16 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
 const clientOrigin = process.env.CLIENT_ORIGIN || 'https://bringsuite.com'
 const stripe = stripeSecret ? new Stripe(stripeSecret) : null
 
+/**
+ * Handles incoming HTTP requests and routes them to the appropriate API endpoints.
+ *
+ * This function processes requests based on the path and method, performing actions such as authentication,
+ * database queries, and user management. It handles various API routes including session management,
+ * creation and deletion of items, and user plan updates, while managing errors and responses accordingly.
+ *
+ * @param req - The HTTP request object containing request data.
+ * @param res - The HTTP response object used to send responses back to the client.
+ */
 export default async function handler(req, res) {
   const origin = getOrigin(req)
   const url = new URL(req.url || '/', origin)
