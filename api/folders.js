@@ -3,6 +3,16 @@ dotenv.config({ path: '.env.local' })
 import { prisma } from '../server/db.js'
 import { json, readBody } from '../server/util.js'
 
+/**
+ * Handles HTTP requests for folder management.
+ *
+ * This function processes GET and POST requests. For GET requests, it retrieves folders associated with a user identified by the 'x-user-id' header. For POST requests, it creates or updates a user and a folder based on the provided request body. It handles errors for missing user information and invalid request bodies, returning appropriate HTTP status codes and error messages.
+ *
+ * @param req - The HTTP request object containing headers and body.
+ * @param res - The HTTP response object used to send responses.
+ * @returns A JSON response with the requested data or error messages.
+ * @throws Error If there is a failure in fetching or creating data.
+ */
 export default async function handler(req, res) {
   const method = req.method || 'GET'
   if (method === 'GET') {
