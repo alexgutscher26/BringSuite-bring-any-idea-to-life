@@ -23,10 +23,12 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onU
               alert('Stripe is not configured. Missing publishable key.');
               return;
           }
-          const resp = await fetch('/api/create-checkout-session', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ plan: 'creator' })
+          const base = (process.env.API_BASE_URL || '').replace(/\/+$/, '');
+          const url = base ? `${base}/api/create-checkout-session` : '/api/create-checkout-session';
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan: 'creator' })
           });
           if (!resp.ok) { alert('Failed to start checkout.'); return; }
           const data = await resp.json();
