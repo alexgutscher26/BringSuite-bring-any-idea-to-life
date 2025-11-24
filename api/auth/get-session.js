@@ -8,6 +8,11 @@ export default async function handler(req, res) {
     const origin = getOrigin(req)
     const request = new Request(new URL('/api/auth/get-session', origin), { method: 'GET', headers: req.headers })
     const response = await getAuth().handler(request)
+    if (response.status >= 400) {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ data: null }))
+      return
+    }
     const headersObj = {}
     response.headers.forEach((v, k) => { headersObj[k] = v })
     res.writeHead(response.status, headersObj)
