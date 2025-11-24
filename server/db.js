@@ -4,6 +4,11 @@ import { Pool } from 'pg'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
-const adapter = new PrismaPg(pool)
-export const prisma = new PrismaClient({ adapter })
+let prismaInstance
+export function getPrisma() {
+  if (prismaInstance) return prismaInstance
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+  const adapter = new PrismaPg(pool)
+  prismaInstance = new PrismaClient({ adapter })
+  return prismaInstance
+}
