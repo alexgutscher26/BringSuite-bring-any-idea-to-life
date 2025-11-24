@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: '.env.local' })
-import { auth } from '../../../server/auth.js'
+import { getAuth } from '../../../server/auth.js'
 import { getOrigin, readBody } from '../../../server/util.js'
 
 export default async function handler(req, res) {
@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const origin = getOrigin(req)
     const body = await readBody(req)
     const request = new Request(new URL('/api/auth/sign-in/email', origin), { method: req.method, headers: req.headers, body })
-    const response = await auth.handler(request)
+    const response = await getAuth().handler(request)
     const headersObj = {}
     response.headers.forEach((v, k) => { headersObj[k] = v })
     res.writeHead(response.status, headersObj)
