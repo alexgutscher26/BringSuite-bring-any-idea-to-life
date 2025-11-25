@@ -18,7 +18,7 @@
 - [ ] Webhooks for creation events (generated, refined, exported)
 - [ ] Autosave with conflict resolution for multi‑tab editing
 - [ ] Saved views/filters for creations and folders
-- [ ] Onboarding tour and sample projects
+- [x] Onboarding tour and sample projects
 - [ ] Notifications (in‑app toasts and email for long tasks)
 - [ ] Internationalization (i18n) and localization
 - [ ] Dark mode and theme customization

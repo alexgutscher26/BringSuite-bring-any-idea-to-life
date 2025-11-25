@@ -874,7 +874,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({ creation, isLoading, i
                  <iframe title="Preview" srcDoc={iframeSrc} className={`w-full h-full transition-opacity duration-300 ${isRefining ? 'opacity-50 blur-sm scale-[0.99]' : 'opacity-100 scale-100'}`} sandbox="allow-scripts allow-forms allow-popups allow-modals allow-same-origin" />
                 
                 {/* Refinement Bar */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 z-30">
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 z-30" aria-label="Refine">
                     <form onSubmit={handleRefineSubmit} className="relative group">
                         <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000 ${isRefining ? 'opacity-60 animate-pulse' : ''}`}></div>
                         <div className="relative flex items-center bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-xl p-1.5 shadow-2xl">

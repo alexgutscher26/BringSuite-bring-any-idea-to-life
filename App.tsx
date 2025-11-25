@@ -8,6 +8,7 @@ import { InputArea } from './components/InputArea';
 import { LivePreview } from './components/LivePreview';
 import { CreationHistory, Creation, Folder } from './components/CreationHistory';
 import { PricingModal } from './components/PricingModal';
+import { SampleProjects } from './components/SampleProjects'
 import { bringToLife, refineCreation } from './services/gemini';
 import { enqueue } from './services/queue';
 import { saveCreation, getAllCreations, setCurrentUser, setCurrentUserInfo, getFolders, createFolder, renameFolder, getUserPlan, setUserPlan } from './services/storage';
@@ -356,29 +357,36 @@ const App: React.FC = () => {
 
   const isFocused = !!activeCreation || isGenerating;
 
+  const handleImportSample = async (creation: Creation) => {
+    const c: Creation = { ...creation, id: creation.id || crypto.randomUUID(), timestamp: new Date() }
+    await saveCreation(c)
+    setActiveCreation(c)
+    setHistory(prev => [c, ...prev])
+  }
+
   return (
     <div className="h-[100dvh] bg-zinc-950 bg-dot-grid text-zinc-50 selection:bg-blue-500/30 overflow-y-auto overflow-x-hidden relative flex flex-col">
       <div className={`min-h-full flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 relative z-10 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${isFocused ? 'opacity-0 scale-95 blur-sm pointer-events-none h-[100dvh] overflow-hidden' : 'opacity-100 scale-100 blur-0'}`}>
-        <div className="w-full flex items-center justify-between py-6 relative z-20">
+        <div className="w-full flex items-center justify-between py-6 relative z-20" aria-label="Header">
             <div className="flex items-center gap-2">
               <div className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest">BringSuite </div>
               <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-mono uppercase tracking-widest">Beta</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3" aria-label="Header actions">
                 {!session && (
                   <>
-                  <button onClick={() => setShowSignIn(true)} className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Sign In</button>
-                  <button onClick={() => setShowSignUp(true)} className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Sign Up</button>
+                  <button onClick={() => setShowSignIn(true)} aria-label="Sign In" className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Sign In</button>
+                  <button onClick={() => setShowSignUp(true)} aria-label="Sign Up" className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Sign Up</button>
                   </>
                 )}
                 {session && (
                   <div className="flex items-center gap-2 text-xs text-zinc-400">
                     <span className="hidden sm:inline">{session.user.name || session.user.email}</span>
-                    <button onClick={() => signOut()} className="px-3 py-1 rounded-full border border-zinc-700 hover:bg-zinc-800 hover:text-white transition-colors">Sign Out</button>
+                    <button onClick={() => signOut()} aria-label="Sign Out" className="px-3 py-1 rounded-full border border-zinc-700 hover:bg-zinc-800 hover:text-white transition-colors">Sign Out</button>
                   </div>
                 )}
-                <button onClick={() => setShowPricing(true)} className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Pricing</button>
-                <button onClick={() => setShowShortcutManager(true)} className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Shortcuts</button>
+                <button onClick={() => setShowPricing(true)} aria-label="Pricing" className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Pricing</button>
+                <button onClick={() => setShowShortcutManager(true)} aria-label="Shortcuts" className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1">Shortcuts</button>
                 {!isPro && (
                     <button onClick={() => setShowPricing(true)} className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 text-amber-200 hover:text-white border border-amber-500/20 hover:border-amber-500/40 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-[0_0_10px_rgba(245,158,11,0.1)] hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                         <SparklesIcon className="w-3 h-3 text-amber-400" />
@@ -392,18 +400,20 @@ const App: React.FC = () => {
                     </div>
                 )}
                 <div className="w-px h-4 bg-zinc-800 mx-1 hidden sm:block"></div>
-                <button onClick={handleNewUpload} disabled={isFocused} className="group flex items-center gap-2 bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
+                <button onClick={handleNewUpload} disabled={isFocused} aria-label="New Upload" className="group flex items-center gap-2 bg-zinc-100 hover:bg-white text-zinc-900 px-4 py-2 rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
                     <PlusIcon className="w-4 h-4 text-blue-600 group-hover:text-blue-500" />
                     <span className="hidden sm:inline">New</span><span className="sm:hidden">New</span>
                 </button>
+                
             </div>
         </div>
         <div className="flex-1 flex flex-col justify-center items-center w-full pb-12">
           <div className="w-full mb-8 md:mb-16"><Hero /></div>
-          <div className="w-full flex justify-center mb-8"><InputArea onGenerate={handleGenerate} isGenerating={isGenerating} disabled={isFocused} fileInputRef={fileInputRef} /></div>
+          <div className="w-full flex justify-center mb-8" aria-label="Upload"><InputArea onGenerate={handleGenerate} isGenerating={isGenerating} disabled={isFocused} fileInputRef={fileInputRef} /></div>
         </div>
         <div className="flex-shrink-0 pb-6 w-full mt-auto flex flex-col items-center gap-6">
             <div className="w-full px-2 md:px-0">
+                <SampleProjects onImport={handleImportSample} />
                 <CreationHistory 
                     history={history} folders={folders} isPro={isPro}
                     onSelect={handleSelectCreation} onCreateFolder={handleCreateFolder} onRenameFolder={handleRenameFolder} onMoveCreation={handleMoveCreation}
@@ -415,7 +425,7 @@ const App: React.FC = () => {
       </div>
       
       <LivePreviewErrorBoundary onClose={handleReset}>
-          <LivePreview creation={activeCreation} isLoading={isGenerating} isRefining={isRefining} isFocused={isFocused} isPro={isPro} onReset={handleReset} onRefine={handleRefine} onTriggerUpgrade={() => setShowPricing(true)} onAutoSave={handleAutoSave} />
+            <LivePreview creation={activeCreation} isLoading={isGenerating} isRefining={isRefining} isFocused={isFocused} isPro={isPro} onReset={handleReset} onRefine={handleRefine} onTriggerUpgrade={() => setShowPricing(true)} onAutoSave={handleAutoSave} />
       </LivePreviewErrorBoundary>
 
       <div className="fixed bottom-4 right-4 z-50">

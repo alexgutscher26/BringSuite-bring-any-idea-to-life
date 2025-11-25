@@ -123,7 +123,7 @@ export const CreationHistory: React.FC<CreationHistoryProps> = ({
   const handleCancelCreating = () => setIsCreatingFolder(false);
 
   return (
-    <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-700" aria-label="Creation archive">
       <div className="flex items-center justify-between mb-3 px-2">
         <div className="flex items-center space-x-3">
              <ClockIcon className="w-4 h-4 text-zinc-500" />

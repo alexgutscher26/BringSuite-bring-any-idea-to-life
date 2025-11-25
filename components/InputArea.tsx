@@ -205,7 +205,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isGenerating, 
       </div>
 
       {/* 2. Text Input & Actions */}
-      <div className="w-full flex flex-col md:flex-row gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+      <div className="w-full flex flex-col md:flex-row gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100" aria-label="Prompt input">
           {/* Text Input Bar */}
           <div className="flex-1 relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -231,7 +231,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isGenerating, 
       </div>
 
       {/* 3. Quick Start Pills */}
-      <div className="flex flex-wrap justify-center gap-2 md:gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+      <div className="flex flex-wrap justify-center gap-2 md:gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200" aria-label="Quick start">
           <span className="text-xs font-medium text-zinc-600 uppercase tracking-wider py-1.5">Quick Start:</span>
           
           <button 
