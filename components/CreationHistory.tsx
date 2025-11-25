@@ -32,6 +32,25 @@ interface CreationHistoryProps {
   onOpenFolder?: (folderId: string | undefined) => void;
 }
 
+/**
+ * Renders the creation history component, allowing users to manage folders and creations.
+ *
+ * This component maintains the state for the current folder, drag-and-drop functionality, and folder creation/editing.
+ * It filters and displays visible creations and folders based on the current folder context, and handles user interactions
+ * for creating, renaming, and moving creations and folders. The component also manages focus for the new folder input.
+ *
+ * @param {Object} props - The properties for the CreationHistory component.
+ * @param {Array} props.history - The list of creations to display.
+ * @param {Array} props.folders - The list of folders to display.
+ * @param {boolean} props.isPro - Indicates if the user has a Pro account.
+ * @param {Function} props.onSelect - Callback function to handle selection of a creation.
+ * @param {Function} props.onCreateFolder - Callback function to handle folder creation.
+ * @param {Function} props.onRenameFolder - Callback function to handle renaming a folder.
+ * @param {Function} props.onMoveCreation - Callback function to handle moving a creation.
+ * @param {Function} props.onTriggerUpgrade - Callback function to prompt user to upgrade.
+ * @param {Function} props.onOpenFolder - Callback function to handle opening a folder.
+ * @returns {JSX.Element} The rendered component.
+ */
 export const CreationHistory: React.FC<CreationHistoryProps> = ({ 
     history, 
     folders, 
