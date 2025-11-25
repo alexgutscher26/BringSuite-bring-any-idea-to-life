@@ -6,6 +6,9 @@ const { PrismaClient } = prismaPkg
 import { PrismaPg } from '@prisma/adapter-pg'
 
 let prismaInstance
+/**
+ * Retrieves a singleton instance of PrismaClient.
+ */
 export function getPrisma() {
   if (prismaInstance) return prismaInstance
   const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
