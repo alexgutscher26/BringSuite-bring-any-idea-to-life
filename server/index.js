@@ -98,6 +98,15 @@ const server = http.createServer(async (req, res) => {
   const userEmailHeader = req.headers['x-user-email']?.toString() || ''
   const userNameHeader = req.headers['x-user-name']?.toString() || ''
 
+  /**
+   * Ensures the existence of a user in the database.
+   *
+   * This function checks if a userId is provided. If so, it attempts to upsert a user record in the database using the Prisma client.
+   * If the user does not exist, it creates a new user with default values for name and email. The updatedAt field is set to the current date.
+   * If an error occurs during the database operation, it is silently caught.
+   *
+   * @param {string} userId - The ID of the user to ensure in the database.
+   */
   async function ensureUser(userId) {
     if (!userId) return
     try {
