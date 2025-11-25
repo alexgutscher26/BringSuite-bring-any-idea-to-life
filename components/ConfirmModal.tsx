@@ -16,6 +16,9 @@ interface ConfirmModalProps {
     variant?: 'danger' | 'warning' | 'info';
 }
 
+/**
+ * Renders a confirmation modal with customizable options.
+ */
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     isOpen,
     title,
