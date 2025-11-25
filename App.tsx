@@ -357,6 +357,9 @@ const App: React.FC = () => {
 
   const isFocused = !!activeCreation || isGenerating;
 
+  /**
+   * Handles the import of a sample creation by saving it and updating the active creation and history.
+   */
   const handleImportSample = async (creation: Creation) => {
     const c: Creation = { ...creation, id: creation.id || crypto.randomUUID(), timestamp: new Date() }
     await saveCreation(c)
