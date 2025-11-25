@@ -360,7 +360,10 @@ const App: React.FC = () => {
     <div className="h-[100dvh] bg-zinc-950 bg-dot-grid text-zinc-50 selection:bg-blue-500/30 overflow-y-auto overflow-x-hidden relative flex flex-col">
       <div className={`min-h-full flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 relative z-10 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${isFocused ? 'opacity-0 scale-95 blur-sm pointer-events-none h-[100dvh] overflow-hidden' : 'opacity-100 scale-100 blur-0'}`}>
         <div className="w-full flex items-center justify-between py-6 relative z-20">
-            <div className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest">Gemini 3.0</div>
+            <div className="flex items-center gap-2">
+              <div className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest">BringSuite </div>
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-mono uppercase tracking-widest">Beta</span>
+            </div>
             <div className="flex items-center gap-3">
                 {!session && (
                   <>
