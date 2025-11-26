@@ -132,7 +132,7 @@ export async function createFolder(folder: { id: string; name: string }): Promis
 /**
  * Rename a folder by its ID.
  *
- * This function checks for the presence of the current user ID and then sends a PUT request to the API to rename the folder with the specified ID. If the response is not successful, it attempts to extract an error message from the response JSON before throwing an error.
+ * This function verifies the presence of the current user ID before sending a PUT request to the API to rename the specified folder. If the response indicates failure, it attempts to extract an error message from the response JSON and throws an error with that message.
  *
  * @param id - The ID of the folder to be renamed.
  * @param name - The new name for the folder.

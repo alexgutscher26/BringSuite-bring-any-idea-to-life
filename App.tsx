@@ -57,7 +57,7 @@ class LivePreviewErrorBoundary extends React.Component<ErrorBoundaryProps, Error
   }
 
   /**
-   * Renders an error message if there is a rendering error; otherwise, renders children.
+   * Renders an error message or the children based on the rendering state.
    */
   render() {
     if (this.state.hasError) {
@@ -107,10 +107,10 @@ const App: React.FC = () => {
     /**
      * Initialize application data and user session information.
      *
-     * This function sets the current user information based on the session, processes the checkout status,
-     * retrieves folders and history from the database, and manages local storage for app history.
-     * It also checks the user's plan and updates the application state accordingly.
-     * Error handling is implemented for various asynchronous operations to ensure robustness.
+     * This asynchronous function sets the current user information based on the session, processes the checkout status,
+     * retrieves folders and history from the database, and manages local storage for app history. It also checks the
+     * user's plan and updates the application state accordingly. Error handling is implemented for various asynchronous
+     * operations to ensure robustness.
      *
      * @returns {Promise<void>} A promise that resolves when the initialization is complete.
      */
@@ -190,8 +190,8 @@ const App: React.FC = () => {
    *
    * This function sets the generating state, processes the input file to convert it to base64 if provided,
    * and enqueues a request to generate files based on the prompt text. If files are generated successfully,
-   * it creates a new creation object, saves it, and updates the active creation and history.
-   * Errors during the process are caught and logged, with a user alert for failure.
+   * it creates a new creation object, saves it, and updates the active creation and history. Errors during the process
+   * are caught and logged, with a user alert for failure.
    *
    * @param promptText - The text prompt used for generating the creation.
    * @param file - An optional file to be processed and included in the creation.
@@ -261,7 +261,7 @@ const App: React.FC = () => {
   /**
    * Handles the auto-saving of creation files.
    *
-   * This function checks if there is an active creation process. If so, it updates the creation object with the provided files and the current timestamp. It then attempts to save the updated creation using the saveCreation function. If the save is successful, it updates the history and the active creation state. In case of an error during the save process, it logs the error to the console.
+   * This function checks if there is an active creation process. If an active creation exists, it updates the creation object with the provided files and the current timestamp. It then attempts to save the updated creation using the saveCreation function. Upon a successful save, it updates the history and the active creation state. If an error occurs during the save process, it logs the error to the console.
    *
    * @param files - A record of files where each key is a string and the value is an object containing the file content.
    */
@@ -294,6 +294,15 @@ const App: React.FC = () => {
    * Triggers a click event on the import input reference.
    */
   const handleImportClick = () => importInputRef.current?.click();
+  /**
+   * Handles the creation of a new folder.
+   *
+   * This function checks if the user is authenticated by verifying the session. If the user is not authenticated, it triggers a sign-in prompt.
+   * If authenticated, it creates a draft folder with a unique ID and the provided name, then attempts to save it using the createFolder function.
+   * Upon successful creation, it updates the folder list. In case of an error, it logs the error and displays a toast notification with the error message.
+   *
+   * @param name - The name of the folder to be created.
+   */
   const handleCreateFolder = async (name: string) => {
     if (!session?.user?.id) { setShowSignIn(true); return; }
     const draft: Folder = { id: crypto.randomUUID(), name };
@@ -302,11 +311,30 @@ const App: React.FC = () => {
       setFolders(prev => [...prev, { id: saved.id, name: saved.name }]);
     } catch (e: any) { console.error('Create folder failed', e); showToast(e?.message || 'Failed to create folder', 'error'); }
   };
+  /**
+   * Handles the renaming of a folder by its ID.
+   *
+   * This function first checks if the user is authenticated by verifying the session. If not, it triggers a sign-in prompt.
+   * Upon successful authentication, it attempts to rename the folder using the renameFolder function and updates the folder list accordingly.
+   * If an error occurs during the renaming process, it logs the error and displays a toast notification with the error message.
+   *
+   * @param id - The unique identifier of the folder to be renamed.
+   * @param name - The new name for the folder.
+   */
   const handleRenameFolder = async (id: string, name: string) => {
     if (!session?.user?.id) { setShowSignIn(true); return; }
     try { await renameFolder(id, name); setFolders(prev => prev.map(f => f.id === id ? { ...f, name } : f)); }
     catch (e: any) { console.error('Rename folder failed', e); showToast(e?.message || 'Failed to rename folder', 'error'); }
   };
+  /**
+   * Handles the deletion of a folder by setting up a confirmation dialog.
+   *
+   * This function first checks if the user is signed in; if not, it prompts the user to sign in.
+   * It then retrieves the folder by its ID and counts the number of items within that folder.
+   * Finally, it sets the confirmation state with the folder's ID, name, and item count.
+   *
+   * @param id - The ID of the folder to be deleted.
+   */
   const handleDeleteFolder = (id: string) => {
     if (!session?.user?.id) { setShowSignIn(true); return; }
     const folder = folders.find(f => f.id === id);
@@ -315,6 +343,15 @@ const App: React.FC = () => {
     setConfirmDelete({ id, name: folderName, itemCount: itemsInFolder });
   };
 
+  /**
+   * Confirm the deletion of a folder and update the state accordingly.
+   *
+   * This function checks if a folder deletion is confirmed. If confirmed, it attempts to delete the folder using deleteFolder, updates the folders state to remove the deleted folder, and adjusts the history state to move items back to the root. In case of an error during deletion, it logs the error and displays a toast notification with the error message.
+   *
+   * @param confirmDelete - An object containing the id of the folder to be deleted.
+   * @returns A promise that resolves when the deletion process is complete.
+   * @throws Error If the deletion process fails.
+   */
   const confirmDeleteFolder = async () => {
     if (!confirmDelete) return;
     try {
@@ -332,9 +369,9 @@ const App: React.FC = () => {
   /**
    * Handles the creation of a move operation for a specified item.
    *
-   * This function searches for an item in the history by its creationId. If found, it updates the item's folderId
-   * and attempts to save the updated item using the saveCreation function. Upon successful save, it updates the
-   * history state to reflect the changes. If the save operation fails, an error is logged to the console.
+   * This function searches for an item in the history by its creationId. If the item is found, it updates the item's folderId
+   * and attempts to save the updated item using the saveCreation function. Upon a successful save, it updates the history state
+   * to reflect the changes. If the save operation fails, an error is logged to the console.
    *
    * @param creationId - The ID of the creation to be moved.
    * @param folderId - The ID of the folder to which the creation will be moved, or undefined if no folder is specified.
